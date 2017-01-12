@@ -1,0 +1,113 @@
+Programme Bioseq.
+TP1 29/01/2016
+CANDA Antoine
+
+Rendu TP1 : 
+
+Le 02/02/2016
+
+Les fonctions sont toutes fonctionelles. 
+Je n'ai pas eu le temps d'adapter mon code pour eviter de recopier trop les fonctions communes entre kmers et graines. 
+
+Le script execute-tp1 comprend les exemples de l'enonce et les parties tests et analyses de donnees des parties 1 2 3.
+Je n'ai pas su faire la partie V car il me parait delicat de comparer des kmers de taille 8 et 11 ensemble... 
+
+Rendu TP2 :
+
+Le 07/02/2016
+
+Suppression du package et de la classe Kmers au profit de la classe Graines.
+Retrait de duplication de code en partant du constat suivant :
+Un kmers de taille 4 revient a utiliser la graine "####".
+Il a suffit de creer la fonction createGraine(int taille) qui renvoye la graine corresppondante. 
+On evite ainsi la duplication de code. 
+
+Creation du package sequence avec la classe Sequence qui possede les methodes permettant d'extraire la sequence d'ADN (ainsi que l'identifiant) a partir du fichier passe en parametre.
+Ajout de la classe windows avec la methode windows qui cree les fenetres. 
+
+A ce stade les fonctions sont fonctionnelles.
+
+Rendu TP3 :
+
+Le 24/02/2016
+
+Modification importante du code notamment de Sequence.java.
+Notamment au niveau des constructeurs qui crée les listes de sequences et identifiants. 
+
+Modification de createSequence(String f) qui maintenant gére les fichiers contenant plusieurs sequences d'adn et non plus une seule.
+Modification de createSubSequence qui maintenant cree une liste de liste de kmers pour les fichiers contenant plusieurs sequences.
+Creation de la methode traitementSubSequence qui cree la liste des kmers en fonction de la graine (param) et de la sequence fournie en parametre.
+
+Ajout de taille initiale plus importante lors de la création des ArrayLists : 
+	
+	- Pour les listes contenant des listes de sequences (quand on traite plusieurs sequences par fichiers) j'ai decide de passer la taille de la liste à 50 au lieu de 10.
+	- Pour les listes contenant des kmers, je vais passer de la taille initiale (10) à 50 000 ce qui corresppond à une capacité supérieur à ce qui est nécessaire pour phagelambda. Cela permet de gagner en rapidité 
+	en évitant la réallocation systématique du tableau interne si il y a de nombreux kmers ajoutés.
+	- Pour la liste contenant des fenêtres j'ai décidé de créer une liste avec un tableau de taille 2000 initialement.
+
+Ce sont des valeurs choisies de manière arbitraires en fonction de la taille des fichiers que l'on traite actuellement. Il n'est pas exclu que cela soit modifié plus tard.
+	
+ Modification des methodes dans la globalite pour tenir compte de la possibilite d'avoir plusieurs sequences par fichier.
+
+ A priori les methodes fonctionnent toujours et renvoyent les mêmes resultats apres modifications. 
+ 
+ Ajout des methodes best-matches et VJ-discover qui sont le sujet du TP.
+ Je ne suis globalement pas satisfait de l'implementation.
+ En effet j'ai utilisé le polymorphisme sur mes méthodes mais il y a trop de code recopié pour peu de changement.
+ J'ai du ajouté un attribut pour un troisieme fichier a traite et retouche les methodes d'initialisation, de comparaison de kmers et bestmatch pour peu de chose. 
+ 
+ Rendu TP4 :
+ 
+ Le 26/02/2016.
+ 
+ Creation du package suffixe et de la classe Suffixe. 
+ Creation des methodes de base suffix-array et search-fasta-naive. Les methodes sont fonctionnelles. 
+ 
+ Rendu TP5 :
+ 
+ Le 04/03/2016.
+ 
+ Creation des methodes suffix-array, bwt et unbwt. 
+ Ces methodes demandent de gros espaces memoires et demande l'allocation manuelle de plus de memoire à la JVM. 
+ Il est possible de creer le suffix-array de phage lambda avec les pc de la fac (4Go). 
+ De la meme maniere j'ai pu creer la bwt d'ebola-z assez rapidement mais l'inversion de cette derniere demande pret d'une heure sur mon pc.
+ Amelioration possible de ces methodes apres recherche : se baser sur le tableau des suffixes et creer le tableau des suffix sans conserver toute les chaines de la seq : fonctionner que sur les int.
+ A faire des que possible.
+ La methode search-fasta-sa ne renvoie qu'une seule position de la sequence si presente. Il faudrait la corriger. Neanmoins les positions retournes correspondent a celle trouver avec search-fasta-naive
+ 
+ Rendu TP6 :
+ 
+ Le 11/03/2016:
+ 
+ Mon intuition du TP4 par rapport aux methodes se sont revele juste et donc j'ai renomme les premieres methodes en y ajoutant naive.
+ J'ai redéfinit les fonctions suffix-array, bwt et unbwt en utilsant les méthodes plus efficaces vus en cours notamment unbwt qui reprend les proprietes LF et permet de pouvoir inverser la bwt de maniere bien plus efficace que
+ celle du TP5. En effet l'inversion d'ebola-z.bwt est quasiment instantanée (moins de 3s) contre pret d'une heure avant. De meme il n'était pas possible avant de pouvoir effectuer les operations avec un espace memoire reduit (obligation de forcer
+  la JVM a utiliser 3Go de memoire). 
+  Je n'ai pas pu tester les methodes sur le chromosome 14 de maniere efficace car la sequence n'est pas correcte : il doit y avoir quelques millions de nucleotides representes par un N au lieu des 4 nucleotides de base que j'ai considere.
+  Ajout des classes Suffixes , et des deux classes ComparatorSuffixe et ComparatorSuffixes. 
+  
+  suffix-array sur Streptococcus ~ 1 min pour execution.
+  bwt sur Streptococcus ~ 9min30 pour execution.
+  unbwt sur Streptococcus ~19min  pour execution.
+  
+  Grosse amelioration ajoute pour unbwt : utiliser recherche dichotomique pour trouver la bonne position plutot qu'un parcours naif.
+  
+  Ajout de la methode match-bwt qui recherche si la sequence passe en parametre existe dans le fichier contenant la bwt du genome.
+
+  Grosses ameliorations bis : 
+  utilisation de comparaison sur les caracteres pour creer suffix-array et StringBuilder pour bwt.
+  Les temps de creation de suffix-array et bwt sur Thermophilus passent sous les 10s contre 1 et 10 minutes pratiquement avant. et unbwt met 2 min 30 environ contre prêt de 15min précédemment.
+
+  
+ Rendu TP7 :
+ 
+ Le 18/03/2016
+
+ Difficulte à utiliser huffman sans les redirections de port.
+ Du coup j'ai ete obligé de couper en deux les fonctions compress et decompress malheuresement faute de temps.
+ La solution consiste a creer un fichier intermediaire que l'on nommera phage_lambda.txt qui contiendra la sequence ayant subi la BWT, la MTF et la RLE. On appliquera ensuite la compression de huffman ou le fichier sera le resultat de la decompression 
+ en fonction du moment d'exploitation.
+ 
+ Amelioration à apporter : inclure la compression et decompression de Huffman directement dans les fonctions compress-fasta et decompress-fasta.
+ 
+ 
